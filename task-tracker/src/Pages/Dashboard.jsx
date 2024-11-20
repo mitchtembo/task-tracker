@@ -1,42 +1,88 @@
 import React from "react";
 import Navbar from "../components/Navbar";
+import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
+import { supabase } from "../libs/supabaseClient";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      navigate('/login');
+    } catch (error) {
+      console.error('Error logging out:', error.message);
+    }
+  };
+
+  const isActiveLink = (path) => {
+    return location.pathname === path ? "bg-indigo-700" : "";
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white shadow-lg rounded-lg p-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Welcome to Your Dashboard</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Client Management Card */}
-            <div className="bg-blue-50 p-6 rounded-lg">
-              <h2 className="text-lg font-semibold text-blue-900 mb-2">Client Management</h2>
-              <p className="text-blue-700 mb-4">Manage your client relationships and information.</p>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                View Clients
-              </button>
-            </div>
-
-            {/* Project Tracking Card */}
-            <div className="bg-green-50 p-6 rounded-lg">
-              <h2 className="text-lg font-semibold text-green-900 mb-2">Project Tracking</h2>
-              <p className="text-green-700 mb-4">Monitor and update your ongoing projects.</p>
-              <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                View Projects
-              </button>
-            </div>
-
-            {/* Analytics Card */}
-            <div className="bg-purple-50 p-6 rounded-lg">
-              <h2 className="text-lg font-semibold text-purple-900 mb-2">Analytics</h2>
-              <p className="text-purple-700 mb-4">View insights and performance metrics.</p>
-              <button className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
-                View Analytics
-              </button>
-            </div>
-          </div>
+    <div className="min-h-screen flex flex-col md:flex-row bg-gray-100">
+      {/* Sidebar */}
+      <aside className="w-full md:w-64 bg-indigo-600 text-white md:min-h-screen flex-shrink-0">
+        <div className="p-4">
+          <h2 className="text-2xl font-bold">Clarity CMS</h2>
         </div>
+        <nav className="mt-6">
+          <ul className="space-y-2">
+            <li>
+              <Link
+                to="/dashboard"
+                className={`block py-2 px-4 hover:bg-indigo-700 rounded ${isActiveLink('/dashboard')}`}
+              >
+                Dashboard
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/dashboard/clients"
+                className={`block py-2 px-4 hover:bg-indigo-700 rounded ${isActiveLink('/dashboard/clients')}`}
+              >
+                Clients
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/dashboard/projects"
+                className={`block py-2 px-4 hover:bg-indigo-700 rounded ${isActiveLink('/dashboard/projects')}`}
+              >
+                Projects
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/dashboard/settings"
+                className={`block py-2 px-4 hover:bg-indigo-700 rounded ${isActiveLink('/dashboard/settings')}`}
+              >
+                Settings
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <header className="bg-white shadow px-6 py-4 flex justify-between items-center">
+          <h1 className="text-xl font-bold text-gray-800">Dashboard</h1>
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          >
+            Logout
+          </button>
+        </header>
+
+        {/* Main Area */}
+        <main className="flex-1 p-6 overflow-auto">
+          <Outlet />
+        </main>
       </div>
     </div>
   );

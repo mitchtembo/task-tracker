@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { supabase } from '../libs/supabaseClient';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { supabase } from "../libs/supabaseClient";
+import { Loader, Center } from "@mantine/core";
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -14,18 +15,21 @@ export default function Login() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
+
+      // Navigate to dashboard after successful login
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 2000);
       
-      navigate('/dashboard');
     } catch (error) {
       setError(error.message);
-    } finally {
       setLoading(false);
     }
   };
@@ -83,15 +87,27 @@ export default function Login() {
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? "Signing in..." : "Sign in"}
             </button>
           </div>
 
           <div className="text-sm text-center">
-            <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+            <Link
+              to="/register"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
               Don't have an account? Sign up
             </Link>
           </div>
+
+          {/* Show Mantine loader when loading */}
+          {loading && (
+            <div className="mt-4">
+              <Center>
+                <Loader color="indigo" size="xl" variant="bars" style={{ margin: '20px 0' }} />
+              </Center>
+            </div>
+          )}
         </form>
       </div>
     </div>

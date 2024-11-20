@@ -11,14 +11,7 @@ const LandingNav = () => {
               Clarity CMS
             </Link>
           </div>
-          <div className="flex items-center">
-            <Link
-              to="/login"
-              className="bg-white text-blue-600 px-6 py-2 rounded-lg shadow-md font-semibold hover:bg-gray-100 transition-colors"
-            >
-              Sign In
-            </Link>
-          </div>
+          
         </div>
       </div>
     </nav>
